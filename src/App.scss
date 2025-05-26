@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $primary-color: #3498db;
 $secondary-color: #2ecc71;
 $danger-color: #e74c3c;
@@ -86,13 +88,13 @@ $priority-low-bg: #e6f7ff;
       white-space: nowrap;
 
       &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust($primary-color, $lightness: -10%);
       }
     }
   }
 
   .todo-search-area {
-    width: 100%; // 追加：親として幅を制限
+    width: 100%;
     box-sizing: border-box;
     margin-bottom: 20px;
 
@@ -103,7 +105,7 @@ $priority-low-bg: #e6f7ff;
       border-radius: $border-radius;
       font-size: 16px;
       background-color: $white;
-      box-sizing: border-box; // 追加：パディング込みで100%に
+      box-sizing: border-box;
       display: block;
 
       &:focus {
@@ -209,16 +211,15 @@ $priority-low-bg: #e6f7ff;
             background-color: $secondary-color;
 
             &:hover {
-              background-color: darken($secondary-color, 10%);
+              background-color: color.adjust($secondary-color, $lightness: -10%);
             }
           }
-
 
           .complete-button {
             background-color: $primary-color;
 
             &:hover {
-              background-color: darken($primary-color, 10%);
+              background-color: color.adjust($primary-color, $lightness: -10%);
             }
           }
 
@@ -227,7 +228,7 @@ $priority-low-bg: #e6f7ff;
             color: $white;
 
             &:hover {
-              background-color: darken($danger-color, 10%);
+              background-color: color.adjust($danger-color, $lightness: -10%);
             }
           }
         }

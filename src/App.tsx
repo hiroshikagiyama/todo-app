@@ -2,64 +2,80 @@ import { useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { format, isToday, isTomorrow } from "date-fns"
 import "./App.scss"
-import type { DisplayMode, Priority, PriorityInfo, Todo } from "./types.ts"
-import { initial } from "./initial.ts"
+import type { DisplayMode, Todo, Priority } from "./types.ts"
+import { initialTodos } from "./initialTodos.ts"
 
 export default function TodoApp() {
-  const priorityInfo: Record<Priority, PriorityInfo> = {
-    high: { order: 0, label: "高" },
-    medium: { order: 1, label: "中" },
-    low: { order: 2, label: "低" },
-  }
+  const todayDate = format(new Date(), "yyyy-MM-dd")
+  const PRIORITY_LABELS = ["低", "中", "高"] as const
 
-  const [items, setItems] = useState<Todo[]>(initial)
-  const [text, setText] = useState<string>("")
-  const [priority, setPriority] = useState<Priority>("medium")
-  const [limit, setLimit] = useState<string>(format(new Date(), "yyyy-MM-dd"))
-  const [mode, setMode] = useState<DisplayMode>("active")
-  const [flagId, setFlagId] = useState<string | null>(null)
-  const [change, setChange] = useState<string>("")
-  const [search, setSearch] = useState<string>("")
+  const [todos, setTodos] = useState<Todo[]>(initialTodos)
+  const [newTodoText, setNewTodoText] = useState("")
+  const [priority, setPriority] = useState<Priority>(1)
+  const [displayMode, setDisplayMode] = useState<DisplayMode>("active")
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editingText, setEditingText] = useState("")
+  const [searchText, setSearchText] = useState("")
+  const [dueDate, setDueDate] = useState(todayDate)
 
-  const addTodoItemAndResetInputFields = () => {
-    if (!text.trim()) return
+  const addTodo = () => {
+    if (!newTodoText.trim() || !priority || !dueDate) return
     const newTodo: Todo = {
       id: uuidv4(),
-      title: text,
-      status: false,
+      todoText: newTodoText,
+      completed: false,
       priority,
-      date: new Date(limit).getTime(),
+      dueDateMs: new Date(dueDate).getTime(),
     }
-    setItems([...items, newTodo])
-    setText("")
-    setPriority("medium")
-    setLimit(format(new Date(), "yyyy-MM-dd"))
+    setTodos((prevTodos) => [...prevTodos, newTodo])
+    resetInputFields()
   }
 
-  const getPriorityInformationObjectBasedOnPriority = (priority: Priority): PriorityInfo => {
-    return priorityInfo[priority]
+  const updateTodo = (id: string, updates: Partial<Todo>) => {
+    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, ...updates } : todo)))
   }
 
-  const generateDeadlineDisplayTextBasedOnProvidedDate = (date: Date) => {
+  const deleteTodo = (id: string) => {
+    setTodos(todos.filter((todo) => todo.id !== id))
+  }
+
+  const startEditingTodo = (id: string, text: string) => {
+    setEditingId(id)
+    setEditingText(text)
+  }
+
+  const saveEditedTodo = (id: string) => {
+    updateTodo(id, { todoText: editingText })
+    setEditingId(null)
+    setEditingText("")
+  }
+
+  const compareTodoByPriorityAndText = (a: Todo, b: Todo) => {
+    const priorityDiff = b.priority - a.priority
+    return priorityDiff !== 0 ? priorityDiff : a.todoText.localeCompare(b.todoText)
+  }
+
+  const getFilteredTodos = (): Todo[] => {
+    return todos
+      .filter((todo) => (displayMode === "active" ? !todo.completed : todo.completed))
+      .filter((todo) => todo.todoText.toLowerCase().includes(searchText.toLowerCase()))
+      .sort(compareTodoByPriorityAndText)
+  }
+
+  const resetInputFields = () => {
+    setNewTodoText("")
+    setPriority(1)
+    setDueDate(todayDate)
+  }
+
+  const formatDueDateLabel = (date: Date) => {
     if (isToday(date)) return "🟠今日"
     if (isTomorrow(date)) return "🟡明日"
     if (date < new Date()) return "❌期限切れ"
     return `🟢${format(date, "yyyy-MM-dd")}`
   }
 
-  const filteredTodos = items
-    .filter((todo) => (mode === "active" ? !todo.status : todo.status))
-    .map((todo) => {
-      todo.title = todo.title.toLowerCase()
-      return todo
-    })
-    .filter((todo) => todo.title.includes(search.toLowerCase()))
-    .sort((a, b) => {
-      const orderA = getPriorityInformationObjectBasedOnPriority(a.priority).order
-      const orderB = getPriorityInformationObjectBasedOnPriority(b.priority).order
-      const result = orderA - orderB
-      return result !== 0 ? result : a.title.localeCompare(b.title)
-    })
+  const isAddDisabled = !newTodoText.trim() || !dueDate
 
   return (
     <div className="todo-app">
@@ -69,11 +85,11 @@ export default function TodoApp() {
           タスク
           <input
             type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
+            value={newTodoText}
+            onChange={(e) => setNewTodoText(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                addTodoItemAndResetInputFields()
+                addTodo()
               }
             }}
             placeholder="新しいTodoを入力..."
@@ -84,28 +100,19 @@ export default function TodoApp() {
           優先度
           <select
             value={priority}
-            onChange={(e) => setPriority(e.target.value as Priority)}
+            onChange={(e) => setPriority(Number(e.target.value) as Priority)}
             className="priority-select"
           >
-            <option value="high">高</option>
-            <option value="medium">中</option>
-            <option value="low">低</option>
+            <option value="2">高</option>
+            <option value="1">中</option>
+            <option value="0">低</option>
           </select>
         </label>
         <label>
           期限
-          <input
-            type="date"
-            value={limit}
-            onChange={(e) => setLimit(e.target.value)}
-            className="due-date-input"
-          />
+          <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="due-date-input" />
         </label>
-        <button
-          onClick={addTodoItemAndResetInputFields}
-          className="add-button"
-          disabled={!text.trim()}
-        >
+        <button onClick={addTodo} className="add-button" disabled={isAddDisabled}>
           登録
         </button>
       </div>
@@ -115,131 +122,62 @@ export default function TodoApp() {
           検索
           <input
             type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
             placeholder="Todoを検索..."
             className="search-input"
           />
         </label>
         <div className="toggle-button-wrapper">
           <button
-            onClick={() => setMode(mode === "active" ? "completed" : "active")}
+            onClick={() => setDisplayMode(displayMode === "active" ? "completed" : "active")}
             className="toggle-button"
           >
-            {mode === "active" ? "完了したTodoを表示" : "未完了のTodoを表示"}
+            {displayMode === "active" ? "完了したTodoを表示" : "未完了のTodoを表示"}
           </button>
         </div>
       </div>
 
       <div className="todo-list-container">
-        <h2 className="list-title">{mode === "active" ? "未完了のTodo" : "完了したTodo"}</h2>
-        {filteredTodos.length === 0 ? (
+        <h2 className="list-title">{displayMode === "active" ? "未完了のTodo" : "完了したTodo"}</h2>
+        {todos.length === 0 ? (
           <p className="empty-message">
-            {mode === "active"
+            {displayMode === "active"
               ? "Todoがありません。新しいTodoを追加してください。"
               : "完了したTodoはありません。"}
           </p>
         ) : (
           <ul className="todo-list">
-            {filteredTodos.map(({ id, title, status, priority, date }) => (
-              <li key={id} className={`todo-item priority-${priority}`}>
-                {flagId === id ? (
+            {getFilteredTodos().map((todo) => (
+              <li key={todo.id} className={`todo-item priority-${priority}`}>
+                {editingId === todo.id ? (
                   <input
-                    value={change}
-                    onChange={(e) => setChange(e.target.value)}
-                    onBlur={() => {
-                      const editedItemIndex = items.findIndex((item) => item.id === id)
-                      const newItems = items.map((item, index) => {
-                        if (index === editedItemIndex) {
-                          item.title = change
-                        }
-                        return item
-                      })
-                      setItems(newItems)
-                      setFlagId(null)
-                      setChange("")
-                    }}
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                    onBlur={() => saveEditedTodo(todo.id)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        const editedItemIndex = items.findIndex((item) => item.id === id)
-                        const newItems = items.map((item, index) => {
-                          if (index === editedItemIndex) {
-                            item.title = change
-                          }
-                          return item
-                        })
-                        setItems(newItems)
-                        setFlagId(null)
-                        setChange("")
+                        saveEditedTodo(todo.id)
                       }
                     }}
                     autoFocus
                   />
                 ) : (
                   <span className="todo-text">
-                    [{getPriorityInformationObjectBasedOnPriority(priority).label}] {title}
-                    <span className="due-date-label">
-                      {" "}
-                      - {generateDeadlineDisplayTextBasedOnProvidedDate(new Date(date))}
-                    </span>
+                    [{PRIORITY_LABELS[todo.priority]}] {todo.todoText}
+                    <span className="due-date-label"> - {formatDueDateLabel(new Date(todo.dueDateMs))}</span>
                   </span>
                 )}
                 <div className="todo-actions">
-                  {!status && flagId !== id && (
-                    <button
-                      onClick={() => {
-                        setFlagId(id)
-                        setChange(text)
-                      }}
-                      className="edit-button"
-                    >
+                  {!todo.completed && editingId !== todo.id && (
+                    <button onClick={() => startEditingTodo(todo.id, todo.todoText)} className="edit-button">
                       編集
                     </button>
                   )}
-                  {!status && (
-                    <button
-                      onClick={() => {
-                        const editedItemIndex = items.findIndex((item) => item.id === id)
-                        const newItems = items.map((item, index) => {
-                          if (index === editedItemIndex) {
-                            item.status = true
-                          }
-                          return item
-                        })
-                        setItems(newItems)
-                        setFlagId(null)
-                        setChange("")
-                      }}
-                      className="complete-button"
-                    >
-                      完了
-                    </button>
-                  )}
-                  {status && (
-                    <button
-                      onClick={() => {
-                        const editedItemIndex = items.findIndex((item) => item.id === id)
-                        const newItems = items.map((item, index) => {
-                          if (index === editedItemIndex) {
-                            item.status = false
-                          }
-                          return item
-                        })
-                        setItems(newItems)
-                        setFlagId(null)
-                        setChange("")
-                      }}
-                      className="complete-button"
-                    >
-                      再開
-                    </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      setItems(items.filter((todo) => todo.id !== id))
-                    }}
-                    className="delete-button"
-                  >
+                  <button onClick={() => updateTodo(todo.id, { completed: false })} className="complete-button">
+                    {todo.completed ? "再開" : "完了"}
+                  </button>
+                  <button onClick={() => deleteTodo(todo.id)} className="delete-button">
                     削除
                   </button>
                 </div>
