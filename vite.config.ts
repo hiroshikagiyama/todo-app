@@ -12,6 +12,8 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html"],
       all: true,
+      include: ["src/**/*.{ts,tsx}"], // 対象ファイル
+      exclude: ["**/*.test.*", "**/__tests__/**", "node_modules"],
     },
   },
   css: {

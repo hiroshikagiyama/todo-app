@@ -13,13 +13,11 @@ export default function TodoApp() {
   const [newTodoText, setNewTodoText] = useState("")
   const [priority, setPriority] = useState<Priority>(1)
   const [displayMode, setDisplayMode] = useState<DisplayMode>("active")
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editingText, setEditingText] = useState("")
   const [searchText, setSearchText] = useState("")
   const [dueDate, setDueDate] = useState(todayDate)
 
   const addTodo = () => {
-    if (!newTodoText.trim() || !priority || !dueDate) return
+    if (!newTodoText.trim()) return
     const newTodo: Todo = {
       id: uuidv4(),
       todoText: newTodoText,
@@ -37,17 +35,6 @@ export default function TodoApp() {
 
   const deleteTodo = (id: string) => {
     setTodos(todos.filter((todo) => todo.id !== id))
-  }
-
-  const startEditingTodo = (id: string, text: string) => {
-    setEditingId(id)
-    setEditingText(text)
-  }
-
-  const saveEditedTodo = (id: string) => {
-    updateTodo(id, { todoText: editingText })
-    setEditingId(null)
-    setEditingText("")
   }
 
   const compareTodoByPriorityAndText = (a: Todo, b: Todo) => {
@@ -87,11 +74,6 @@ export default function TodoApp() {
             type="text"
             value={newTodoText}
             onChange={(e) => setNewTodoText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                addTodo()
-              }
-            }}
             placeholder="新しいTodoを入力..."
             className="todo-input"
           />
@@ -116,7 +98,6 @@ export default function TodoApp() {
           登録
         </button>
       </div>
-
       <div className="todo-search-area">
         <label>
           検索
@@ -150,31 +131,15 @@ export default function TodoApp() {
           <ul className="todo-list">
             {getFilteredTodos().map((todo) => (
               <li key={todo.id} className={`todo-item priority-${priority}`}>
-                {editingId === todo.id ? (
-                  <input
-                    value={editingText}
-                    onChange={(e) => setEditingText(e.target.value)}
-                    onBlur={() => saveEditedTodo(todo.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        saveEditedTodo(todo.id)
-                      }
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <span className="todo-text">
-                    [{PRIORITY_LABELS[todo.priority]}] {todo.todoText}
-                    <span className="due-date-label"> - {formatDueDateLabel(new Date(todo.dueDateMs))}</span>
-                  </span>
-                )}
+                <span className="todo-text">
+                  [{PRIORITY_LABELS[todo.priority]}] {todo.todoText}
+                  <span className="due-date-label"> - {formatDueDateLabel(new Date(todo.dueDateMs))}</span>
+                </span>
                 <div className="todo-actions">
-                  {!todo.completed && editingId !== todo.id && (
-                    <button onClick={() => startEditingTodo(todo.id, todo.todoText)} className="edit-button">
-                      編集
-                    </button>
-                  )}
-                  <button onClick={() => updateTodo(todo.id, { completed: false })} className="complete-button">
+                  <button
+                    onClick={() => updateTodo(todo.id, { completed: !todo.completed })}
+                    className="complete-button"
+                  >
                     {todo.completed ? "再開" : "完了"}
                   </button>
                   <button onClick={() => deleteTodo(todo.id)} className="delete-button">
