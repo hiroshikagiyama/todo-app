@@ -121,7 +121,7 @@ export default function TodoApp() {
 
       <div className="todo-list-container">
         <h2 className="list-title">{displayMode === "active" ? "未完了のTodo" : "完了したTodo"}</h2>
-        {todos.length === 0 ? (
+        {getFilteredTodos().length === 0 ? (
           <p className="empty-message">
             {displayMode === "active"
               ? "Todoがありません。新しいTodoを追加してください。"
