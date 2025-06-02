@@ -1,11 +1,11 @@
 import { useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { format, isToday, isTomorrow } from "date-fns"
-import "./App.scss"
+import "../App.scss"
 import type { DisplayMode, Todo, Priority } from "./types.ts"
 import { initialTodos } from "./initialTodos.ts"
 
-export default function TodoApp() {
+export default function App() {
   const todayDate = format(new Date(), "yyyy-MM-dd")
   const PRIORITY_LABELS = ["低", "中", "高"] as const
 
