@@ -32,7 +32,9 @@ export function UserDashboard() {
           setUsers(data.users)
           setLoading(false)
           setErrorMessage("")
-          if (data.users.length > 0 && data.users.every((u: User) => u.isVerified && u.hasPremium)) {
+          if (data.users.length === 0) {
+            document.title = "ユーザーがいません"
+          }else if (data.users.length > 0 && data.users.every((u: User) => u.isVerified && u.hasPremium)) {
             document.title = `全てのプレミアムユーザー`
           } else {
             document.title = `${data.users.length}人のユーザー`

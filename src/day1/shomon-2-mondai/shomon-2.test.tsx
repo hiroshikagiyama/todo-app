@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import { render, screen, waitFor } from "@testing-library/react"
 import { UserDashboard } from "./shomon-2-mondai"
+// import { UserDashboard } from "./kaitourei/shomon-2-kaitourei.tsx"
 
 describe("UserDashboard", () => {
   const originalFetch = window.fetch
@@ -22,7 +23,7 @@ describe("UserDashboard", () => {
     expect(screen.getByText("Loading...")).toBeInTheDocument()
   })
 
-  it("通常ユーザー一覧を表示し、タイトルが「n人のユーザー」になる", async () => {
+  it("通常のユーザー一覧を表示し、タイトルが「n人のユーザー」になる", async () => {
     const users = [
       { id: 1, name: "Alice", isVerified: true, hasPremium: false },
       { id: 2, name: "Bob", isVerified: false, hasPremium: false },
@@ -30,7 +31,7 @@ describe("UserDashboard", () => {
     window.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ users }),
-    }) as any
+    }) as unknown as typeof window.fetch
 
     render(<UserDashboard />)
     await waitFor(() => {
@@ -45,10 +46,10 @@ describe("UserDashboard", () => {
       { id: 1, name: "Alice", isVerified: true, hasPremium: true },
       { id: 2, name: "Bob", isVerified: true, hasPremium: true },
     ]
-    global.fetch = vi.fn().mockResolvedValue({
+    window.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ users }),
-    }) as any
+    }) as unknown as typeof window.fetch
 
     render(<UserDashboard />)
     await waitFor(() => {
@@ -58,16 +59,16 @@ describe("UserDashboard", () => {
     })
   })
 
-  it("ユーザーが空の場合、空リストを表示しタイトルが「0人のユーザー」になる", async () => {
+  it("ユーザーが空の場合、空リストを表示しタイトルが「ユーザーがいません」になる", async () => {
     window.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ users: [] }),
-    }) as any
+    }) as unknown as typeof window.fetch
 
     render(<UserDashboard />)
     await waitFor(() => {
       expect(screen.queryByRole("listitem")).not.toBeInTheDocument()
-      expect(document.title).toBe("0人のユーザー")
+      expect(document.title).toBe("ユーザーがいません")
     })
   })
 
@@ -75,7 +76,7 @@ describe("UserDashboard", () => {
     window.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 404,
-    }) as any
+    }) as unknown as typeof window.fetch
 
     render(<UserDashboard />)
     await waitFor(() => {
@@ -87,7 +88,7 @@ describe("UserDashboard", () => {
     window.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 500,
-    }) as any
+    }) as unknown as typeof window.fetch
 
     render(<UserDashboard />)
     await waitFor(() => {
@@ -96,7 +97,7 @@ describe("UserDashboard", () => {
   })
 
   it("fetchやネットワークエラー時にエラーメッセージを表示する", async () => {
-    window.fetch = vi.fn().mockRejectedValue(new Error("Network error")) as any
+    window.fetch = vi.fn().mockRejectedValue(new Error("Network error")) as unknown as typeof window.fetch
 
     render(<UserDashboard />)
     await waitFor(() => {
@@ -108,7 +109,7 @@ describe("UserDashboard", () => {
     window.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({}),
-    }) as any
+    }) as unknown as typeof window.fetch
 
     render(<UserDashboard />)
     await waitFor(() => {

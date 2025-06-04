@@ -45,37 +45,6 @@ function useUsers() {
   return { users, loading, errorMessage }
 }
 
-export function UserDashboard2() {
-  const { users, loading, errorMessage } = useUsers()
-
-  // 2. 複雑な条件を説明変数にまとめる
-  const isAllPremiumVerified = users.length > 0 && users.every((user) => user.isVerified && user.hasPremium)
-
-  // 3. タイトル変更は副作用として分離
-  useEffect(() => {
-    if (users.length === 0) {
-      document.title = "ユーザーがいません"
-    } else if (isAllPremiumVerified) {
-      document.title = "全てのプレミアムユーザー"
-    } else {
-      document.title = `${users.length}人のユーザー`
-    }
-  }, [users, isAllPremiumVerified])
-
-  if (loading) return <div>Loading...</div>
-  if (errorMessage) return <div>Error: {errorMessage}</div>
-
-  return (
-    <div>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>{user.name}</li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
 export function UserDashboard() {
   const { users, loading, errorMessage } = useUsers()
 
@@ -106,3 +75,4 @@ export function UserDashboard() {
     </div>
   )
 }
+
