@@ -2,7 +2,7 @@ import { useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { format, isToday, isTomorrow } from "date-fns"
 import "../App.scss"
-import type { DisplayMode, Todo, Priority } from "./types.ts"
+import type { DisplayMode, Priority, Todo } from "./types.ts"
 import { initialTodos } from "./initialTodos.ts"
 
 export default function App() {
@@ -17,7 +17,7 @@ export default function App() {
   const [dueDate, setDueDate] = useState(todayDate)
 
   const addTodo = () => {
-    if (!newTodoText.trim()) return
+    if (!newTodoText.replace(/^[\s\u3000]+|[\s\u3000]+$/g, "")) return
     const newTodo: Todo = {
       id: uuidv4(),
       todoText: newTodoText,
@@ -62,8 +62,6 @@ export default function App() {
     return `🟢${format(date, "yyyy-MM-dd")}`
   }
 
-  const isAddDisabled = !newTodoText.trim() || !dueDate
-
   return (
     <div className="todo-app">
       <h1>タスク管理アプリ</h1>
@@ -94,7 +92,11 @@ export default function App() {
           期限
           <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="due-date-input" />
         </label>
-        <button onClick={addTodo} className="add-button" disabled={isAddDisabled}>
+        <button
+          onClick={addTodo}
+          className="add-button"
+          disabled={!newTodoText.replace(/^[\s\u3000]+|[\s\u3000]+$/g, "")}
+        >
           登録
         </button>
       </div>
