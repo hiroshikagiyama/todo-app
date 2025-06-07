@@ -43,7 +43,7 @@ export default function App() {
     return priorityDiff !== 0 ? priorityDiff : a.todoText.localeCompare(b.todoText)
   }
 
-  const getFilteredTodos = (): Todo[] => {
+  const filterAndSortTodos = (): Todo[] => {
     return todos
       .filter((todo) => (displayMode === "active" ? !todo.completed : todo.completed))
       .filter((todo) => todo.todoText.toLowerCase().includes(searchText.toLowerCase()))
@@ -57,98 +57,107 @@ export default function App() {
   }
 
   const formatDueDateLabel = (date: Date) => {
-    if (isToday(date)) return "🟠今日"
-    if (isTomorrow(date)) return "🟡明日"
-    if (date < new Date()) return "❌期限切れ"
-    return `🟢${format(date, "yyyy-MM-dd")}`
+    if (isToday(date)) return "🟠 今日"
+    if (isTomorrow(date)) return "🟡 明日"
+    if (date < new Date()) return "❌ 期限切れ"
+    return `🟢 ${format(date, "yyyy-MM-dd")}`
   }
 
   return (
-    <div className="todo-app">
-      <h1>タスク管理アプリ</h1>
-      <div className="todo-input-area">
-        <label>
-          タスク
-          <input
-            type="text"
-            value={newTodoText}
-            onChange={(e) => setNewTodoText(e.target.value)}
-            placeholder="新しいTodoを入力..."
-            className="todo-input"
-          />
-        </label>
-        <label>
-          優先度
-          <select
-            value={priority}
-            onChange={(e) => setPriority(Number(e.target.value) as Priority)}
-            className="priority-select"
-          >
-            <option value="2">高</option>
-            <option value="1">中</option>
-            <option value="0">低</option>
-          </select>
-        </label>
-        <label>
-          期限
-          <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="due-date-input" />
-        </label>
-        <button onClick={addTodo} className="add-button" disabled={!newTodoText.trim()}>
-          登録
-        </button>
-      </div>
-      <div className="todo-search-area">
-        <label>
-          検索
-          <input
-            type="text"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Todoを検索..."
-            className="search-input"
-          />
-        </label>
-        <div className="toggle-button-wrapper">
-          <button
-            onClick={() => setDisplayMode(displayMode === "active" ? "completed" : "active")}
-            className="toggle-button"
-          >
-            {displayMode === "active" ? "完了したTodoを表示" : "未完了のTodoを表示"}
+    <div className="todo-app-wrapper">
+      <div className="todo-app">
+        <h1>タスク管理アプリ</h1>
+        <div className="todo-input-area">
+          <label>
+            タスク
+            <input
+              type="text"
+              value={newTodoText}
+              onChange={(e) => setNewTodoText(e.target.value)}
+              placeholder="新しいTodoを入力..."
+              className="todo-input"
+            />
+          </label>
+          <label>
+            優先度
+            <select
+              value={priority}
+              onChange={(e) => setPriority(Number(e.target.value) as Priority)}
+              className="priority-select"
+            >
+              <option value="2">高</option>
+              <option value="1">中</option>
+              <option value="0">低</option>
+            </select>
+          </label>
+          <label>
+            期限
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="due-date-input"
+            />
+          </label>
+          <button onClick={addTodo} className="add-button" disabled={!newTodoText.trim()}>
+            登録
           </button>
         </div>
-      </div>
+        <div className="todo-search-area">
+          <label>
+            検索
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="Todoを検索..."
+              className="search-input"
+            />
+          </label>
+        </div>
 
-      <div className="todo-list-container">
-        <h2 className="list-title">{displayMode === "active" ? "未完了のTodo" : "完了したTodo"}</h2>
-        {getFilteredTodos().length === 0 ? (
-          <p className="empty-message">
-            {displayMode === "active"
-              ? "Todoがありません。新しいTodoを追加してください。"
-              : "完了したTodoはありません。"}
-          </p>
-        ) : (
-          <ul className="todo-list">
-            {getFilteredTodos().map((todo) => (
-              <li key={todo.id} className={`todo-item priority-${priority}`}>
-                <span className="todo-text">
-                  [{PRIORITY_LABELS[todo.priority]}] {todo.todoText}
-                  <span className="due-date-label"> - {formatDueDateLabel(new Date(todo.dueDateMs))}</span>
-                </span>
-                <div className="todo-actions">
-                  <button
-                    onClick={() => updateTodo(todo.id, { completed: !todo.completed })}
-                    className="complete-button"
-                  >
-                    {todo.completed ? "再開" : "完了"}
-                  </button>
-                  <button onClick={() => deleteTodo(todo.id)} className="delete-button">
-                    削除
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="todo-list-container">
+          <div className="todo-list-header-container">
+            <h2 className="list-title">{displayMode === "active" ? "未完了のTodo" : "完了したTodo"}</h2>
+            <button
+              onClick={() => setDisplayMode(displayMode === "active" ? "completed" : "active")}
+              className="toggle-button"
+            >
+              {displayMode === "active" ? "完了したTodoを表示" : "未完了のTodoを表示"}
+            </button>
+          </div>
+          {filterAndSortTodos().length === 0 ? (
+            <p className="empty-message">
+              {displayMode === "active"
+                ? "Todoがありません。新しいTodoを追加してください。"
+                : "完了したTodoはありません。"}
+            </p>
+          ) : (
+            <ul className="todo-list">
+              {filterAndSortTodos().map((todo) => (
+                <li key={todo.id} className={`todo-item priority-${priority}`}>
+                  <div className="todo-wrapper">
+                    <span className="todo-text">
+                      [{PRIORITY_LABELS[todo.priority]}] {todo.todoText}
+                    </span>
+                    <span className="due-date-label"> {formatDueDateLabel(new Date(todo.dueDateMs))}</span>
+                  </div>
+                  <div className="todo-actions">
+                    <button
+                      onClick={() => updateTodo(todo.id, { completed: !todo.completed })}
+                      className="complete-button"
+                    >
+                      {todo.completed ? "再開" : "完了"}
+                    </button>
+                    <button onClick={() => deleteTodo(todo.id)} className="delete-button">
+                      削除
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   )

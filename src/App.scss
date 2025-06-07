@@ -14,46 +14,122 @@ $priority-high-bg: #ffe6e6;
 $priority-medium-bg: #fffbe6;
 $priority-low-bg: #e6f7ff;
 
-.todo-app {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: $white;
-  border-radius: 8px;
-  box-shadow: $box-shadow;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+}
 
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 24px;
-    font-weight: 600;
-  }
+.todo-app-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: $light-gray;
 
-  .todo-input-area {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 20px;
-    align-items: flex-end;
+  .todo-app {
+    max-width: 400px;
+    max-height: 800px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-color: $white;
+    border-radius: 8px;
+    box-shadow: $box-shadow;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-    label {
-      display: flex;
-      flex-direction: column;
-      font-size: 14px;
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
       color: #333;
-      flex: 1 1 140px;
+      font-size: 24px;
+      font-weight: 600;
+    }
 
-      select,
-      input[type='date'] {
-        margin-top: 4px;
+    .todo-input-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 20px;
+      align-items: flex-end;
+
+      label {
+        display: flex;
+        flex-direction: column;
+        font-size: 14px;
+        color: #333;
+        flex: 1 1 140px;
+
+        select,
+        input[type='date'] {
+          margin-top: 4px;
+          padding: 10px 15px;
+          border: 1px solid $medium-gray;
+          border-radius: $border-radius;
+          font-size: 16px;
+          background-color: $white;
+          transition: border-color 0.3s;
+
+          &:focus {
+            border-color: $primary-color;
+            outline: none;
+          }
+        }
+      }
+
+      .todo-input {
+        flex: 2 1 100%;
+        padding: 10px 15px;
+        border: 1px solid $medium-gray;
+        border-radius: $border-radius;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s;
+
+        &:focus {
+          border-color: $primary-color;
+        }
+      }
+
+      .add-button {
+        background-color: $primary-color;
+        color: $white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+        white-space: nowrap;
+
+        &:disabled {
+          background-color: color.adjust($primary-color, $lightness: 25%);
+        }
+
+        &:hover {
+          background-color: color.adjust($primary-color, $lightness: -10%);
+        }
+      }
+    }
+
+    .todo-search-area {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+
+      label {
+        font-size: 14px;
+        color: #333;
+      }
+
+      input[type='text'] {
+        width: 100%;
         padding: 10px 15px;
         border: 1px solid $medium-gray;
         border-radius: $border-radius;
         font-size: 16px;
         background-color: $white;
-        transition: border-color 0.3s;
+        box-sizing: border-box;
+        display: block;
 
         &:focus {
           border-color: $primary-color;
@@ -62,176 +138,145 @@ $priority-low-bg: #e6f7ff;
       }
     }
 
-    .todo-input {
-      flex: 2 1 100%;
-      padding: 10px 15px;
-      border: 1px solid $medium-gray;
-      border-radius: $border-radius;
-      font-size: 16px;
-      outline: none;
-      transition: border-color 0.3s;
 
-      &:focus {
-        border-color: $primary-color;
-      }
-    }
-
-    .add-button {
-      background-color: $primary-color;
-      color: $white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: $border-radius;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-      white-space: nowrap;
-
-      &:hover {
-        background-color: color.adjust($primary-color, $lightness: -10%);
-      }
-    }
-  }
-
-  .todo-search-area {
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-
-    input[type='text'] {
-      width: 100%;
-      padding: 10px 15px;
-      border: 1px solid $medium-gray;
-      border-radius: $border-radius;
-      font-size: 16px;
-      background-color: $white;
-      box-sizing: border-box;
-      display: block;
-
-      &:focus {
-        border-color: $primary-color;
-        outline: none;
-      }
-    }
-  }
-
-  .toggle-button-wrapper {
-    display: flex;
-    justify-content: end;
-    margin-top: 30px;
-    margin-bottom: 20px;
-  }
-
-  .toggle-button {
-    padding: 10px 20px;
-    background-color: $light-gray;
-    border: 1px solid $primary-color;
-    border-radius: $border-radius;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: background-color 0.3s;
-
-    &:hover {
-      background-color: $medium-gray;
-    }
-  }
-
-  .todo-list-container {
-    .list-title {
-      font-size: 18px;
-      margin-bottom: 10px;
-      color: #444;
-      font-weight: 600;
-      border-bottom: 2px solid $light-gray;
-      padding-bottom: 8px;
-    }
-
-    .empty-message {
-      text-align: center;
-      color: $dark-gray;
-      padding: 20px 0;
-      font-style: italic;
-    }
-
-    .todo-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      .todo-item {
+    .todo-list-container {
+      .todo-list-header-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 15px 10px;
-        border-bottom: 1px solid $medium-gray;
-        border-radius: $border-radius;
-        margin-bottom: 10px;
-        transition: background-color 0.2s;
+        padding-bottom: 10px;
+        border-bottom: 1px solid $light-gray;
 
-        &:hover {
+        .list-title {
+          font-size: 18px;
+          color: #444;
+          font-weight: 600;
+        }
+
+        .toggle-button {
+          padding: 8px 16px;
           background-color: $light-gray;
-        }
+          border: 1px solid $dark-gray;
+          border-radius: $border-radius;
+          cursor: pointer;
+          font-size: 12px;
+          font-weight: 600;
+          transition: background-color 0.3s;
 
-        &.priority-high {
-          background-color: $priority-high-bg;
+          &:hover {
+            background-color: $medium-gray;
+          }
         }
+      }
 
-        &.priority-medium {
-          background-color: $priority-medium-bg;
-        }
 
-        &.priority-low {
-          background-color: $priority-low-bg;
-        }
+      .empty-message {
+        height: 300px;
+        line-height: 300px;
+        text-align: center;
+        color: $dark-gray;
+        padding: 20px 0;
+        font-style: italic;
+      }
 
-        .todo-text {
-          font-size: 16px;
-          color: #333;
-          word-break: break-word;
-          flex: 1;
-          margin-right: 10px;
-        }
+      .todo-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        height: 300px;
+        overflow: auto;
 
-        .todo-actions {
+        .todo-item {
           display: flex;
-          gap: 8px;
+          justify-content: space-between;
+          align-items: center;
+          padding: 15px 10px;
+          border-bottom: 1px solid $medium-gray;
+          border-radius: $border-radius;
+          margin-bottom: 10px;
+          transition: background-color 0.2s;
 
-          button {
-            padding: 6px 12px;
-            border: none;
-            color: $white;
-            border-radius: $border-radius;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
+          &:hover {
+            background-color: $light-gray;
           }
 
-          .edit-button {
-            background-color: $secondary-color;
+          &.priority-high {
+            background-color: $priority-high-bg;
+          }
 
-            &:hover {
-              background-color: color.adjust($secondary-color, $lightness: -10%);
+          &.priority-medium {
+            background-color: $priority-medium-bg;
+          }
+
+          &.priority-low {
+            background-color: $priority-low-bg;
+          }
+
+          .todo-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding-right: 20px;
+
+            .todo-text {
+              font-size: 16px;
+              color: #333;
+              word-break: break-word;
+              flex: 1;
+              margin-right: 10px;
+            }
+
+            .due-date-label{
+              font-size: 12px;
+              text-align: end;
             }
           }
 
-          .complete-button {
-            background-color: $primary-color;
 
-            &:hover {
-              background-color: color.adjust($primary-color, $lightness: -10%);
+          .todo-actions {
+            display: flex;
+            gap: 8px;
+
+            button {
+              padding: 6px 12px;
+              border: none;
+              color: $white;
+              border-radius: $border-radius;
+              cursor: pointer;
+              font-size: 14px;
+              transition: background-color 0.3s;
             }
-          }
 
-          .delete-button {
-            background-color: $danger-color;
-            color: $white;
+            .edit-button {
+              background-color: $secondary-color;
 
-            &:hover {
-              background-color: color.adjust($danger-color, $lightness: -10%);
+              &:hover {
+                background-color: color.adjust($secondary-color, $lightness: -10%);
+              }
+            }
+
+            .complete-button {
+              background-color: $primary-color;
+
+              &:hover {
+                background-color: color.adjust($primary-color, $lightness: -10%);
+              }
+            }
+
+            .delete-button {
+              background-color: $danger-color;
+              color: $white;
+
+              &:hover {
+                background-color: color.adjust($danger-color, $lightness: -10%);
+              }
             }
           }
         }
+      }
+
+      .todo-list::-webkit-scrollbar {
+        display: none;
       }
     }
   }

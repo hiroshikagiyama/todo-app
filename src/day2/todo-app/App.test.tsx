@@ -290,10 +290,10 @@ describe("TodoAppのテスト", () => {
       })
 
       it.each([
-        { taskText: "今日のタスク", dueDate: "2025-06-01", expectText: "🟠今日" },
-        { taskText: "明日のタスク", dueDate: "2025-06-02", expectText: "🟡明日" },
-        { taskText: "期限切れタスク", dueDate: "2025-05-30", expectText: "❌期限切れ" },
-        { taskText: "来月のタスク", dueDate: "2025-07-01", expectText: "🟢2025-07-01" },
+        { taskText: "今日のタスク", dueDate: "2025-06-01", expectText: "🟠 今日" },
+        { taskText: "明日のタスク", dueDate: "2025-06-02", expectText: "🟡 明日" },
+        { taskText: "期限切れタスク", dueDate: "2025-05-30", expectText: "❌ 期限切れ" },
+        { taskText: "来月のタスク", dueDate: "2025-07-01", expectText: "🟢 2025-07-01" },
       ])("期限が taskText（$dueDate）のとき、$expectText を表示する", async ({ taskText, dueDate, expectText }) => {
         for (const btn of screen.getAllByRole("button", { name: "削除" })) {
           await userEvent.click(btn)
