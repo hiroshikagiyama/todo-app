@@ -231,6 +231,47 @@ describe("TodoAppのテスト", () => {
         expect(screen.queryByText("[低] todo3")).not.toBeInTheDocument()
       })
 
+      it("タスクの優先度「高」「中」「低」の順番で並んで表示される", async () => {
+        const taskList = screen.getAllByRole("listitem")
+
+        expect(taskList[0]).toHaveTextContent("[高] todo2")
+        expect(taskList[1]).toHaveTextContent("[中] todo1")
+        expect(taskList[2]).toHaveTextContent("[低] todo4")
+      })
+
+      it("タスクの優先度が同じ場合、タスク名の昇順で並んで表示される", async () => {
+        const taskInput = screen.getByRole("textbox", { name: "タスク" })
+        const prioritySelect = screen.getByRole("combobox", { name: "優先度" })
+        const addButton = screen.getByRole("button", { name: "登録" })
+
+        await userEvent.type(taskInput, "zzzz")
+        await userEvent.selectOptions(prioritySelect, "2")
+        await userEvent.click(addButton)
+        await userEvent.type(taskInput, "aaaa")
+        await userEvent.selectOptions(prioritySelect, "2")
+        await userEvent.click(addButton)
+        await userEvent.type(taskInput, "いいいい")
+        await userEvent.selectOptions(prioritySelect, "1")
+        await userEvent.click(addButton)
+        await userEvent.type(taskInput, "ああああ")
+        await userEvent.selectOptions(prioritySelect, "1")
+        await userEvent.click(addButton)
+        await userEvent.type(taskInput, "日本語")
+        await userEvent.selectOptions(prioritySelect, "0")
+        await userEvent.click(addButton)
+
+        const taskList = screen.getAllByRole("listitem")
+
+        expect(taskList[0]).toHaveTextContent("[高] aaaa")
+        expect(taskList[1]).toHaveTextContent("[高] todo2")
+        expect(taskList[2]).toHaveTextContent("[高] zzzz")
+        expect(taskList[3]).toHaveTextContent("[中] todo1")
+        expect(taskList[4]).toHaveTextContent("[中] ああああ")
+        expect(taskList[5]).toHaveTextContent("[中] いいいい")
+        expect(taskList[6]).toHaveTextContent("[低] todo4")
+        expect(taskList[7]).toHaveTextContent("[低] 日本語")
+      })
+
       it("未完了のタスクが0件のときメッセージ表示される", async () => {
         for (const btn of screen.getAllByRole("button", { name: "削除" })) {
           await userEvent.click(btn)
@@ -249,10 +290,10 @@ describe("TodoAppのテスト", () => {
       })
 
       it.each([
-        { taskName: "今日のタスク", dueDate: "2025-06-01", expectText: "🟠今日" },
-        { taskName: "明日のタスク", dueDate: "2025-06-02", expectText: "🟡明日" },
-        { taskName: "期限切れタスク", dueDate: "2025-05-30", expectText: "❌期限切れ" },
-        { taskName: "来月のタスク", dueDate: "2025-07-01", expectText: "🟢2025-07-01" },
+        { taskText: "今日のタスク", dueDate: "2025-06-01", expectText: "🟠今日" },
+        { taskText: "明日のタスク", dueDate: "2025-06-02", expectText: "🟡明日" },
+        { taskText: "期限切れタスク", dueDate: "2025-05-30", expectText: "❌期限切れ" },
+        { taskText: "来月のタスク", dueDate: "2025-07-01", expectText: "🟢2025-07-01" },
       ])("期限が $taskName（$dueDate）のとき、$expectText を表示する", async ({ taskName, dueDate, expectText }) => {
         for (const btn of screen.getAllByRole("button", { name: "削除" })) {
           await userEvent.click(btn)
