@@ -294,7 +294,7 @@ describe("TodoAppのテスト", () => {
         { taskText: "明日のタスク", dueDate: "2025-06-02", expectText: "🟡明日" },
         { taskText: "期限切れタスク", dueDate: "2025-05-30", expectText: "❌期限切れ" },
         { taskText: "来月のタスク", dueDate: "2025-07-01", expectText: "🟢2025-07-01" },
-      ])("期限が $taskName（$dueDate）のとき、$expectText を表示する", async ({ taskName, dueDate, expectText }) => {
+      ])("期限が taskText（$dueDate）のとき、$expectText を表示する", async ({ taskText, dueDate, expectText }) => {
         for (const btn of screen.getAllByRole("button", { name: "削除" })) {
           await userEvent.click(btn)
         }
@@ -303,7 +303,7 @@ describe("TodoAppのテスト", () => {
         const dueDateInput = screen.getByLabelText("期限")
         const addButton = screen.getByRole("button", { name: "登録" })
 
-        await userEvent.type(input, taskName)
+        await userEvent.type(input, taskText)
         await userEvent.clear(dueDateInput)
         await userEvent.type(dueDateInput, dueDate)
         await userEvent.click(addButton)
