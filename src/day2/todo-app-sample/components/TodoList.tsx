@@ -1,4 +1,4 @@
-import type { DisplayMode, Priority, Todo } from "../../types.ts"
+import type { DisplayMode, Priority, Todo } from "../types.ts"
 import { format, isToday, isTomorrow } from "date-fns"
 import { type Dispatch, useState } from "react"
 import * as React from "react"

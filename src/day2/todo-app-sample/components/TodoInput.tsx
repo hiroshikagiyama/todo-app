@@ -1,4 +1,4 @@
-import type { Priority, Todo } from "../../types.ts"
+import type { Priority, Todo } from "../types.ts"
 import { v4 as uuidv4 } from "uuid"
 import { type Dispatch, useState } from "react"
 import { format } from "date-fns"
