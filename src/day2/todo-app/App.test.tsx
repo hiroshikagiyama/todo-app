@@ -75,6 +75,7 @@ describe("TodoAppのテスト", () => {
       expect(screen.getAllByRole("listitem")).toHaveLength(3)
     })
   })
+
   describe("バリデーション", () => {
     it("優先度に「高」「中」「低」を含む", async () => {
       const prioritySelect = screen.getByRole("combobox", { name: "優先度" })
@@ -140,6 +141,7 @@ describe("TodoAppのテスト", () => {
       },
     )
   })
+
   describe("登録処理", () => {
     it("タスクを入力後、登録ボタンをクリックすると、登録する", async () => {
       await addTask("新規タスク")
@@ -171,6 +173,7 @@ describe("TodoAppのテスト", () => {
       expect(dueDateInput).toHaveValue("2025-06-01")
     })
   })
+
   describe("検索機能", () => {
     it("検索で入力した文字でフィルターされて表示する", async () => {
       await userEvent.type(screen.getByRole("textbox", { name: "検索" }), "todo1")
@@ -251,6 +254,7 @@ describe("TodoAppのテスト", () => {
       expect(todoList[7]).toHaveTextContent("[低] 日本語")
     })
   })
+
   describe("期限ラベル表示", () => {
     it.each([
       { taskText: "今日のタスク", dueDate: "2025-06-01", expectText: "🟠 今日" },
