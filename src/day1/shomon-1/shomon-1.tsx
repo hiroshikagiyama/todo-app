@@ -10,10 +10,10 @@ const notU = [
   { age: 20, name: "hanakomachi" },
 ]
 
-export  function f(u) {
+export  function f(u: User) {
   if (20 <= u.age) {
-    if(!notU.includes(u.name)){
-        return true
+    if (!notU.some(notu => notu.name === u.name)) {
+      return true
       }
       return false
       } else {
@@ -29,7 +29,7 @@ export  function f(u) {
 }
 
 export function checkAllUserLogin (u:User[]) {
-  const result = []
+  const result: string[] = []
 u.forEach((user) => {
   const login = f(user)
   const greeting = greet(user.name)
