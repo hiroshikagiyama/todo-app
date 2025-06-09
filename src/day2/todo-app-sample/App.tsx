@@ -1,5 +1,5 @@
 import { useState } from "react"
-import "../../App.scss"
+import "../App.scss"
 import type { Priority, Todo } from "./types.ts"
 import { initialTodos } from "./initialTodos.ts"
 import { TodoInput } from "./components/TodoInput.tsx"
