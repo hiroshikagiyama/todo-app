@@ -2,6 +2,8 @@ import type { Mode, Priority, Todo } from "../types.ts"
 import { format, isToday, isTomorrow } from "date-fns"
 import { type Dispatch, useState } from "react"
 import * as React from "react"
+import { Canvas } from "@react-three/fiber"
+import { OrbitControls, Stars } from "@react-three/drei"
 
 type Field3Props = {
   items: Todo[]
