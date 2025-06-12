@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import App from "./App.tsx"
+import TodoApp from "./TodoApp.tsx"
 
 describe("TodoAppのテスト", () => {
   beforeEach(() => {
     vi.setSystemTime(new Date(2025, 5, 1))
-    render(<App />)
+    render(<TodoApp />)
   })
 
   afterEach(() => {
