@@ -20,7 +20,6 @@ export const Field3 = (props: Field3Props) => {
   const filterAndSort = (): Todo[] => {
     return props.items
       .filter((item) => {
-        console.log(item)
         if (mode === "active") {
           return !item.check
         } else {
