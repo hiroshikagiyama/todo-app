@@ -4,15 +4,15 @@ export type User = {
   name: string
 }
 
-const notU = [
+const objArr = [
   { age: 118, name: "octocat" },
   { age: 25, name: "saburo" },
   { age: 20, name: "hanakomachi" },
 ]
 
-export  function f(u: User) {
+export  function func(u: User) {
   if (20 <= u.age) {
-    if (!notU.some(notu => notu.name === u.name)) {
+    if (!objArr.some(obj => obj.name === u.name)) {
       return true
       }
       return false
@@ -31,7 +31,7 @@ export  function f(u: User) {
 export function checkAllUserLogin (u:User[]) {
   const result: string[] = []
 u.forEach((user) => {
-  const login = f(user)
+  const login = func(user)
   const greeting = greet(user.name)
   result.push(greeting + (login ? ", welcome!" : ", you are not allowed."))
 })

@@ -5,7 +5,7 @@ type Field2Props = {
   search: string
   setSearch: Dispatch<React.SetStateAction<string>>
 }
-
+// Field2：保存されているタスクの検索欄エリア
 export const Field2 = (props: Field2Props) => {
   return (
     <div className="todo-search-area">

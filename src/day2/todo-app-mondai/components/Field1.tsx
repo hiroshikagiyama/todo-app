@@ -9,11 +9,12 @@ type Field1Props = {
   setValue: Dispatch<React.SetStateAction<Priority>>
   setItems: Dispatch<React.SetStateAction<Todo[]>>
 }
-
+// Field1：アプリの入力エリア
 export const Field1 = (props: Field1Props) => {
   const [newItem, setNewItem] = useState("")
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"))
 
+  //新しいタスクの追加
   const add = () => {
     const data: Todo = {
       id: uuidv4(),
@@ -26,6 +27,7 @@ export const Field1 = (props: Field1Props) => {
     reset()
   }
 
+  // タスクの入力状態を初期値に戻す
   const reset = () => {
     setNewItem("")
     props.setValue(1)

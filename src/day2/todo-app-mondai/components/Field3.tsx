@@ -9,14 +9,16 @@ type Field3Props = {
   search: string
   value: Priority
 }
-
+// Field3：保存されたタスクの一覧表示や、完了・未完了の状態の変更エリア
 export const Field3 = (props: Field3Props) => {
   const [mode, setMode] = useState<Mode>("active")
 
+  // タスクの完了・未完了の状態を変更
   const change = (id: string, updates: Partial<Todo>) => {
     props.setItems(props.items.map((todo) => (todo.id === id ? { ...todo, ...updates } : todo)))
   }
 
+  // 完了または未完了のタスクだけでフィルターし、優先度の高さとタスク名で並び替え
   const filterAndSort = (): Todo[] => {
     return props.items
       .filter((item) => {
@@ -34,6 +36,7 @@ export const Field3 = (props: Field3Props) => {
       })
   }
 
+  // 設定したタスクの期限によって表示を切替
   const transform = (date: Date) => {
     if (isToday(date)) {
       return "🟠 今日"
@@ -50,6 +53,7 @@ export const Field3 = (props: Field3Props) => {
     }
   }
 
+  // 引数に取ったidのタスクを消去
   const del = (id: string) => {
     props.setItems(props.items.filter((todo) => todo.id !== id))
   }

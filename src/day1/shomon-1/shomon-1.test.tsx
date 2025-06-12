@@ -1,17 +1,18 @@
-import { checkAllUserLogin, f, greet, type User } from "./shomon-1.tsx"
+import { checkAllUserLogin, func, greet, type User } from "./shomon-1.tsx"
 import { describe, expect } from "vitest"
 
 describe("Login Page", () => {
   describe("isLoginAllowed", () => {
     it("20歳以上の場合にログインできること", () => {
       const stubUser:User = {age: 20, name: "john"}
-      const isLoginMoreThan20 = f(stubUser)
+      const isLoginMoreThan20 = func(stubUser)
 
       expect(isLoginMoreThan20).toBeTruthy()
     })
 
     it("20歳以下の場合にログインできないこと", () => {
-      const isLoginLessThan19 = f(19)
+      const stubUser:User = {age: 19, name: "michael"}
+      const isLoginLessThan19 = func(stubUser)
 
       expect(isLoginLessThan19).toBeFalsy()
     })
@@ -47,7 +48,6 @@ describe("Login Page", () => {
         {age: 50, name: "sherry"},
       ]
       const isAllUserLogined = checkAllUserLogin(stubUsers)
-
 
       const expectedMessage = stubUsers.map((user)=> {
         return `Hello, ${user.name}, welcome!`
